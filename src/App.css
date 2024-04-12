@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+.shadow-inset {
+color: whitesmoke;
+    border-radius: 3.125rem;
+border: 2px solid rgba(194, 19, 255, 0.76);
+background: #000;
+mix-blend-mode: lighten;
+box-shadow: 0px 0px 200px 0px #000 inset;
+backdrop-filter: blur(192.5px);
+
+  }
+
+ body{
+  overflow-x: hidden ;
+ }
+  
