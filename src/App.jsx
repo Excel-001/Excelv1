@@ -15,14 +15,40 @@ import excel from './assets/excel.jpg';
 import project from './assets/project.svg';
 import contact from './assets/contact.svg';
 import GraphemeSplitter from 'grapheme-splitter';
-import {motion} from 'framer-motion';
-import { useInView } from 'framer-motion';
 import x from './assets/x.svg';
-import React, { useState } from 'react';
+ 
+import React, { useState, useRef, useEffect, } from 'react';
+import { motion, useAnimation } from "framer-motion";
+import { useInView } from "react-intersection-observer";
 import { TypeAnimation } from 'react-type-animation';
-function App() {
+import vantaGlobe from 'vanta/src/vanta.globe';
 
-   
+function App() {
+  useEffect (()=>{
+    vantaGlobe({
+      el:'#vanta',
+    
+      mouseControls: true,
+      touchControls: true,
+      gyroControls: true,
+      minHeight: 200.00,
+      minWidth: 200.00,
+      scale: 1.00,
+      scaleMobile: 1.00,
+      size: 1.60
+    })
+  },[])
+  const [activeNavItem, setActiveNavItem] = useState(null);
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleClick = () => {
+    setSubmitted(true);
+  };
+
+  const { ref, inView } = useInView({
+    triggerOnce: true,
+    threshold: 0.1, 
+  });
   
   const fadeInAnimationVariants = {
     initial: {
@@ -62,19 +88,20 @@ function App() {
         
         
         <div className=' hidden lg:block' >
-      
         <ul className='font-[inter] font-medium lg:flex gap-10 lg:flex-row'>
   {navs.map((nav) => (
     <motion.li
       key={nav.id}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      whileHover={{ borderBottom: "4px solid #686953" }} 
+      className={activeNavItem === nav.id ? 'active border-b-4 pb-3 border-b-[#F237F6C2] rounded-sm' : ''}
+      onClick={() => setActiveNavItem(nav.id)}
     >
       {nav.content}
     </motion.li>
   ))}
 </ul>
+
       
        
           </div>
@@ -100,7 +127,7 @@ function App() {
           
           <div className='flex gap-6  font-[inter] flex-col   font-normal text-[1.6rem] lg:w-[20rem] lg:h-[70vh]  '>
 
-                <p className='font-[K2D] lg:w-[34.5rem] w-fit  font-extrabold  lg:text-[7.0rem]  lg:oh-3/6 text-[3.2rem] '>
+                <p className='font-[K2D] lg:w-[34.5rem] w-fit  lg:h-[20rem]  font-extrabold  lg:text-[7.0rem]  lg:oh-3/6 text-[3.2rem] '>
    <TypeAnimation
    splitter={(str) => splitter.splitGraphemes(str)}
         sequence={[
@@ -183,11 +210,33 @@ remotely from Nigeria
       </div>
     </section>
   <section className=' py-9 bg-[#120720] text-white flex flex-col overflow-hidden  items-center bg-[image:var(--image-url)] bg-no-repeat bg-right' style={{'--image-url': `url(${dd})`}}>
-    <div className=' w-11/12  flex justify-evenly relative'>
-      <p className='font-[K2D] font-extrabold text-[3.2rem] w-full lg:text-[7.0rem] lg:w-4/12 tracking-[0.4rem]  '>
-  About me
-        </p>
+    <div className=' w-11/12   flex justify-evenly relative'>
+      <motion.p 
+      threshold={45}
+       initial={{
+        transition: {
+          delay: 5 ,
+          ease: "linear"
+        },
+        opacity: 0,
 
+        x: -500
+      }}
+   
+      whileInView={{
+  
+        opacity: 1,
+        x: 0, 
+        transition: {
+          duration: 2 
+        }
+      }}
+      viewport={{ once: true }}
+      className='font-[K2D] font-extrabold text-[3.2rem] w-full lg:text-[7.0rem] lg:w-5/12  tracking-[0.4rem]  '>
+  About me
+        </motion.p>
+
+     
         <span className='flex lg:justify-center  absolute lg:relative right-[-3rem]  items-center'>
               <svg xmlns="http://www.w3.org/2000/svg" width="208" height="149" viewBox="0 0 208 149" fill="none">
   <path d="M31.824 68.2916V80.7083H143L114.894 100.842L127.157 109.62L176.176 74.4999L127.157 39.3794L114.894 48.158L143 68.2916H31.824Z" fill="#FA00FF"/>
@@ -200,11 +249,17 @@ remotely from Nigeria
   <picture className='lg:w-5/12 flex w-11/12 '>
     <img className='w-[100%]' src={profile} alt="" />
   </picture>
-  <p 
-    whileInView={{ opacity: .5, scale: .8}}
-    initial={{ width: "0vw", x: "50vw" }}
-     animate={{ width: "100%", x: 0 }}
-     transition={{ duration: 2, origin: 1, delay:1.5 }}
+  <motion.p 
+     initial={{
+      opacity: 0,
+      x: 500
+    }}
+    whileInView={{
+      opacity: 1,
+      x: 0, 
+    }}
+    transition={{duration: 3, ease: "easeOut", delay:2 }}
+    viewport={{ once: true}}
   className='  flex gap-9 text-center lg:text-start flex-col justify-center font-[inter] lg:gap-14 text-xl lg:w-7/12  ' >
   Meet Excel , a talented web developer with a passion for crafting 
 elegant and functional digital solutions. Armed with expertise in HTML,CSS, JavaScript, React  and more, Their keen eye for detail,coupled with theircommitment to staying abreast of industry trends,ensures that every project they undertake is not only visually stunning but
@@ -214,18 +269,23 @@ elegant and functional digital solutions. Armed with expertise in HTML,CSS, Java
 <picture className=' absolute right-0 lg:relative'> <img src={dotp} alt="" /></picture>
 </span>
 
-  </p>
+  </motion.p>
  
 
 </div>
 
   </section>
 
-  <section className='bg-[#120720] text-white flex justify-center   bg-[image:var(--image-url)] bg-no-repeat' style={{'--image-url': `url(${skillsbg})`}}>
+  <section   id='vanta' className='bg-[#120720] text-white flex justify-center   bg-[image:var(--image-url)] bg-no-repeat' style={{'--image-url': `url(${skillsbg})`}}>
     <div className='w-11/12 flex flex-col gap-12 my-[5vh]'>
     <p className='font-[K2D] font-extrabold lg:text-[7.0rem]   tracking-[0.4rem] text-[3.2rem]  '>
    <TypeAnimation
+   viewport={{once:false}}
         sequence={[
+          "  My Skills ",
+          1000,
+          "  My Skills ",
+          1000,
           "  My Skills ",
           1000,
       
@@ -235,14 +295,14 @@ elegant and functional digital solutions. Armed with expertise in HTML,CSS, Java
         repeat={Infinity}
   
       />
+    
         </p>
-        <div className=' gap-12 flex flex-col flex-wrap'>
+        <div ref={ref} className=' gap-12 flex flex-col lg:flex-row flex-wrap'>
 <motion.div
-  initial={{opacity: 0, y: 700}}
-  animate={{opacity: 1, y: 0}}
-  whileInView={{opacity:1, scale:1}}
-  transition={{duration: 3, ease: "easeOut"}}
-  viewport={{once: false}}
+
+  animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 300 }}
+  transition={{duration: 1, ease: "easeOut"}}
+ 
  className=' flex  font-[inter]  lg:w-2/5 justify-between font-normal'>
   <p>CSS</p>
   <picture className='flex justify-evenly w-9/12'>
@@ -255,7 +315,10 @@ elegant and functional digital solutions. Armed with expertise in HTML,CSS, Java
     <img src={tpinkdot} alt="" />
   </picture>
 </motion.div>
-<div className=' flex font-[inter] lg:w-2/5 justify-between font-normal'>
+<motion.div
+  animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 300 }}
+  transition={{duration: 1, ease: "easeOut", delay:.4 }}
+className=' flex font-[inter] lg:w-2/5 justify-between font-normal'>
   <p className=''>Bootstrap </p>
   <picture className='flex  justify-evenly w-9/12'>
     <img src={pinkdot} alt="" />
@@ -266,9 +329,12 @@ elegant and functional digital solutions. Armed with expertise in HTML,CSS, Java
     <img src={tpinkdot} alt="" />
     <img src={tpinkdot} alt="" />
   </picture>
-</div>
-<div className=' flex font-[inter] lg:w-2/5 justify-between font-normal'>
-  <p className=''>Javascript </p>
+</motion.div>
+<motion.div 
+  animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 300 }}
+  transition={{duration: 1, ease: "easeOut", delay:.8}}
+  className=' flex font-[inter] lg:w-2/5 justify-between font-normal'>
+  <p >Javascript </p>
   <picture className='flex justify-evenly w-9/12'>
     <img src={pinkdot} alt="" />
     <img src={pinkdot} alt="" />
@@ -278,8 +344,10 @@ elegant and functional digital solutions. Armed with expertise in HTML,CSS, Java
     <img src={tpinkdot} alt="" />
     <img src={tpinkdot} alt="" />
   </picture>
-</div>
-<div className=' flex lg:w-2/5 justify-between font-[inter] font-normal'>
+</motion.div>
+<motion.div  animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 300 }}
+  transition={{duration: 1, ease: "easeOut", delay:1}}
+className=' flex lg:w-2/5 justify-between font-[inter] font-normal'>
   <p className=''>React</p>
   <picture className='flex justify-evenly w-9/12'>
     <img src={pinkdot} alt="" />
@@ -290,9 +358,12 @@ elegant and functional digital solutions. Armed with expertise in HTML,CSS, Java
     <img src={tpinkdot} alt="" />
     <img src={tpinkdot} alt="" />
   </picture>
-</div>
-<div className=' flex lg:w-2/5 justify-between font-[inter] font-normal'>
-  <p className=''>Tailwind</p>
+</motion.div>
+<motion.div 
+ animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 300 }}
+ transition={{duration: 1, ease: "easeOut", delay:1.2}}
+className=' flex lg:w-2/5 justify-between font-[inter] font-normal'>
+  <p>Tailwind</p>
   <picture className='flex justify-evenly w-9/12'>
     <img src={pinkdot} alt="" />
     <img src={pinkdot} alt="" />
@@ -302,8 +373,11 @@ elegant and functional digital solutions. Armed with expertise in HTML,CSS, Java
     <img src={pinkdot} alt="" />
     <img src={pinkdot} alt="" />
   </picture>
-</div>
-<div className=' flex font-[inter] lg:w-2/5 justify-between font-normal'>
+</motion.div>
+<motion.div 
+ animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 300 }}
+ transition={{duration: 1, ease: "easeOut", delay:1.4}}
+className=' flex font-[inter] lg:w-2/5 justify-between font-normal'>
   <p className=''>Node.js</p>
   <picture className='flex justify-evenly w-9/12'>
     <img src={pinkdot} alt="" />
@@ -314,8 +388,11 @@ elegant and functional digital solutions. Armed with expertise in HTML,CSS, Java
     <img src={pinkdot} alt="" />
     <img src={tpinkdot} alt="" />
   </picture>
-</div>
-<div className='flex font-[inter] lg:w-2/5 justify-between font-normal'>
+</motion.div>
+<motion.div 
+ animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 300 }}
+ transition={{duration: 1, ease: "easeOut", delay:1.6}}
+className='flex font-[inter] lg:w-2/5 justify-between font-normal'>
   <p className=''>HTML</p>
   <picture className='flex  justify-evenly w-9/12'>
     <img src={pinkdot} alt="" />
@@ -326,8 +403,11 @@ elegant and functional digital solutions. Armed with expertise in HTML,CSS, Java
     <img src={pinkdot} alt="" />
     <img src={pinkdot} alt="" />
   </picture>
-</div>
-<div className=' flex font-[inter] lg:w-2/5 justify-between font-normal'>
+</motion.div>
+<motion.div 
+ animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 300 }}
+ transition={{duration: 1, ease: "easeOut", delay:2}}
+className=' flex font-[inter] lg:w-2/5 justify-between font-normal'>
   <p className=''>Figma</p>
   <picture className='flex justify-evenly w-9/12'>
     <img src={pinkdot} alt="" />
@@ -338,7 +418,7 @@ elegant and functional digital solutions. Armed with expertise in HTML,CSS, Java
     <img src={tpinkdot} alt="" />
     <img src={tpinkdot} alt="" />
   </picture>
-</div>
+</motion.div>
         </div>
             <picture className=" flex justify-end">
       <img className='w-[19rem] hidden lg:block h-[19rem] rounded-full shadow-gray-600 shadow-lg' src={excel} alt="" />
@@ -362,7 +442,7 @@ variants={fadeInAnimationVariants}
 initial={{ opacity: 0, scale: 0 }}
 whileInView={{ opacity: 1, scale: 1}}
 transition={{ease: "linear"}}
-viewport={{ once: false }}
+viewport={{ once: true }}
 whileHover={{ scale: 1.1, translateX: -2, translateY: -2  }}
 style={{'--image-url': `url(${excel})`}} 
 className=" w-3/4 lg:w-3/12 flex-wrap backdrop-blur-[123px] bg-[image:var(--image-url)] bg-cover  bg-no-repeat h-[20rem]  shadow-lg rounded-[16px] cursor-pointer   hover:translate-x-2 hover:-translate-y-2  transition-all ease-in-out duration-300 relative group bg-opacity-15">
@@ -383,7 +463,7 @@ variants={fadeInAnimationVariants}
 initial={{ opacity: 0, scale: 0 }}
 whileInView={{ opacity: 1, scale: 1}}
 transition={{ease: "linear"}}
-viewport={{ once: false }}
+viewport={{ once: true}}
 whileHover={{ scale: 1.1, translateX: -2, translateY: -2  }}
 style={{'--image-url': `url(${excel})`}} 
 className=" w-3/4 lg:w-3/12 flex-wrap backdrop-blur-[123px] bg-[image:var(--image-url)] bg-cover  bg-no-repeat h-[20rem]  shadow-lg rounded-[16px] cursor-pointer   hover:translate-x-2 hover:-translate-y-2  transition-all ease-in-out duration-300 relative group bg-opacity-15">
@@ -404,7 +484,7 @@ variants={fadeInAnimationVariants}
 initial={{ opacity: 0, scale: 0 }}
 whileInView={{ opacity: 1, scale: 1}}
 transition={{ease: "linear"}}
-viewport={{ once: false }}
+viewport={{ once: true }}
 whileHover={{ scale: 1.1, translateX: -2, translateY: -2  }}
 style={{'--image-url': `url(${excel})`}} 
 className=" w-3/4 lg:w-3/12 flex-wrap backdrop-blur-[123px] bg-[image:var(--image-url)] bg-cover  bg-no-repeat h-[20rem]  shadow-lg rounded-[16px] cursor-pointer   hover:translate-x-2 hover:-translate-y-2  transition-all ease-in-out duration-300 relative group bg-opacity-15">
@@ -425,7 +505,7 @@ variants={fadeInAnimationVariants}
 initial={{ opacity: 0, scale: 0 }}
 whileInView={{ opacity: 1, scale: 1}}
 transition={{ease: "linear"}}
-viewport={{ once: false }}
+viewport={{ once: true }}
 whileHover={{ scale: 1.1, translateX: -2, translateY: -2  }}
 style={{'--image-url': `url(${excel})`}} 
 className=" w-3/4 lg:w-3/12 flex-wrap backdrop-blur-[123px] bg-[image:var(--image-url)] bg-cover  bg-no-repeat h-[20rem]  shadow-lg rounded-[16px] cursor-pointer   hover:translate-x-2 hover:-translate-y-2  transition-all ease-in-out duration-300 relative group bg-opacity-15">
@@ -446,7 +526,7 @@ variants={fadeInAnimationVariants}
 initial={{ opacity: 0, scale: 0 }}
 whileInView={{ opacity: 1, scale: 1}}
 transition={{ease: "linear"}}
-viewport={{ once: false }}
+viewport={{ once: true }}
 whileHover={{ scale: 1.1, translateX: -2, translateY: -2  }}
 style={{'--image-url': `url(${excel})`}} 
 className=" w-3/4 lg:w-3/12 flex-wrap backdrop-blur-[123px] bg-[image:var(--image-url)] bg-cover  bg-no-repeat h-[20rem]  shadow-lg rounded-[16px] cursor-pointer   hover:translate-x-2 hover:-translate-y-2  transition-all ease-in-out duration-300 relative group bg-opacity-15">
@@ -467,7 +547,7 @@ variants={fadeInAnimationVariants}
 initial={{ opacity: 0, scale: 0 }}
 whileInView={{ opacity: 1, scale: 1}}
 transition={{ease: "linear"}}
-viewport={{ once: false }}
+viewport={{ once: true }}
 whileHover={{ scale: 1.1, translateX: -2, translateY: -2  }}
 style={{'--image-url': `url(${excel})`}} 
 className=" w-3/4 lg:w-3/12 flex-wrap backdrop-blur-[123px] bg-[image:var(--image-url)] bg-cover  bg-no-repeat h-[20rem]  shadow-lg rounded-[16px] cursor-pointer   hover:translate-x-2 hover:-translate-y-2  transition-all ease-in-out duration-300 relative group bg-opacity-15">
@@ -496,21 +576,27 @@ className=" w-3/4 lg:w-3/12 flex-wrap backdrop-blur-[123px] bg-[image:var(--imag
         <div className='flex flex-col mt-[10vh]  items-center lg:gap-[4rem] gap-6'>
           <span className='flex flex-col w-10/12 lg:w-5/12 text-white  '>
             <label htmlFor="">Name:</label>
-            <input type="text" placeholder='Enter your name here...' className=' w-[100%] placeholder:text-[#D9D9D9D9] placeholder:text-[1.3rem] placeholder:font[inter] p-2 rounded-[2rem] bg-[#49212161] outline-none'  />
+            <input type="text" placeholder='Enter your name here...' className=' w-[100%] placeholder:text-[#D9D9D9D9] placeholder:text-[1rem] placeholder:font[inter] p-2 rounded-[2rem] bg-[#49212161] outline-none'  />
           </span>
           <span className='flex flex-col w-10/12  lg:w-5/12 text-white  '>
             <label htmlFor="">Email:</label>
-            <input type="email" placeholder='Enter your email here...' className=' w-[100%] placeholder:text-[#D9D9D9D9] placeholder:text-[1.3rem] placeholder:font[inter] p-2 rounded-[2rem] bg-[#49212161] outline-none'  />
+            <input type="email" placeholder='Enter your email here...' className=' w-[100%] placeholder:text-[#D9D9D9D9] placeholder:text-[1rem] placeholder:font[inter] p-2 rounded-[2rem] bg-[#49212161] outline-none'  />
           </span>
           <span className='flex flex-col w-10/12  lg:w-5/12 text-white  text-start '>
             <label htmlFor="">Message:</label>
-            <input type="text" placeholder='Enter your message here...' className=' focus:placeholder: h-[15rem] flex justify-start items-start placeholder:text-[#D9D9D9D9] placeholder:text-[1.3rem] placeholder:font[inter] p-2 rounded-[2rem] bg-[#49212161] outline-none'  />
+            <textarea type="text" placeholder='Enter your message here...' className=' focus:placeholder: h-[15rem]  placeholder:text-[#D9D9D9D9] placeholder:text-[1rem] placeholder:font[inter] p-2 rounded-[2rem] bg-[#49212161] outline-none'  />
           </span>
+                <span>
+  <motion.button   whileTap={{ scale: 0.75}} onClick={handleClick}  type="button" className='opacity-50 hover:opacity-100 hover:ease-in focus:bg-opacity-100 font-bold not-italic font-[inter] lg:w-[12.4rem] rounded-[3.125rem] bg-[#EB03FF] text-center p-3'>    {submitted ? 'Submitted' : 'Submit'}</motion.button> 
+</span>
         </div>
+   
         <div>
-          
+ 
         </div>
+      
    </section>
+
     </>
   )
 }
