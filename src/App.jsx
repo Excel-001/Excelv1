@@ -711,9 +711,10 @@ className=" w-3/4 lg:w-3/12 sm:w-5/12 flex-wrap backdrop-blur-[123px] bg-[image:
           type="text"
           id="name"
           value={name}
+          required
           onChange={(e) => setName(e.target.value)}
           placeholder='Enter your name here...'
-          className='w-[100%] placeholder:text-[#D9D9D9D9] placeholder:text-[1rem] placeholder:font[inter] p-2 rounded-[2rem] bg-[#49212161] focus:bg-[#49212161] after:bg-[#49212161] outline-none'
+          className=' w-[100%] placeholder:text-[#D9D9D9D9] placeholder:text-[1rem] placeholder:font[inter] p-2 rounded-[2rem] bg-[#49212161] focus:bg-[#49212161] after:bg-[#49212161] outline-none'
         />
       </span>
       <span className='flex flex-col w-10/12 lg:w-5/12 text-white'>
@@ -722,6 +723,7 @@ className=" w-3/4 lg:w-3/12 sm:w-5/12 flex-wrap backdrop-blur-[123px] bg-[image:
           type="email"
           id="email"
           value={email}
+          required
           onChange={(e) => setEmail(e.target.value)}
           placeholder='Enter your email here...'
           className='w-[100%] placeholder:text-[#D9D9D9D9] placeholder:text-[1rem] placeholder:font[inter] p-2 rounded-[2rem] bg-[#49212161] outline-none'
