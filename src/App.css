@@ -15,4 +15,75 @@ backdrop-filter: blur(192.5px);
  body{
   overflow-x: hidden ;
  }
-  
+ .kk{margin: auto;
+  width: 100vw;
+  height: fit-content;
+  display: flex;
+  padding-bottom: 20px;
+justify-content: space-evenly;
+  gap: 10px;
+}
+
+
+
+.inner{
+
+grid-template-rows: 1fr 1fr;
+
+
+
+}
+
+
+.inner div{
+  text-align: center; color: white;
+  z-index: 3;
+}
+circle{
+  fill: none;
+  stroke: url(#GradientColor);
+  stroke-width: 20px;
+  stroke-dasharray: 450;
+  stroke-dashoffset:450;
+ 
+}
+.circle1{
+   animation: anim 2s linear forwards;
+}
+.circle2{
+   animation: abim 2s linear forwards;
+}
+.circle3{
+   animation: abio 2s linear forwards;
+}
+.svg{
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+@keyframes anim {
+  100%{
+    stroke-dashoffset: 157.5;
+  }
+}
+@keyframes abim{
+  100%{
+    stroke-dashoffset: 90;
+  }
+}
+@keyframes abio {
+  100%{
+    stroke-dashoffset: 37.5;
+  }
+}
+@media screen and (max-width:768px) {
+.kk{
+display: grid;
+
+}
+
+circle{
+  stroke-linecap: round;
+ stroke-width: 10px;
+}
+}
