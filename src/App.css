@@ -63,17 +63,17 @@ circle{
 }
 @keyframes anim {
   100%{
-    stroke-dashoffset: 157.5;
+    stroke-dashoffset: -225;
   }
 }
 @keyframes abim{
   100%{
-    stroke-dashoffset: 90;
+    stroke-dashoffset:-225;
   }
 }
 @keyframes abio {
   100%{
-    stroke-dashoffset: 37.5;
+    stroke-dashoffset: -225;
   }
 }
 @media screen and (max-width:768px) {

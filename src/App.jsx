@@ -14,26 +14,115 @@ import skillsbg from "./assets/skillsbg.svg";
 import project from "./assets/project.svg";
 import contact from "./assets/contact.svg";
 import GraphemeSplitter from "grapheme-splitter";
+import menu from "./assets/menu.svg";
 import x from "./assets/x.svg";
 import React, { useState, useRef, useEffect } from "react";
 import { motion, useAnimation, AnimatePresence } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { TypeAnimation } from "react-type-animation";
+import emailjs from "@emailjs/browser";
 
 function App() {
-  const form = useRef();
-  const sendEmail = (e) => {
-    e.preventDefault();
-    emailjs.sendForm(
-      "service_smo0y2i",
-      "template_uddcq2q",
-      e.target,
-      "kugwCCsQnP9-UAMTy"
-    );
-    setMessage("");
-    setEmail("");
-    setName("");
+  const [projectCount, setProjectCount] = useState(null);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const token = "nfp_hYqDLSxYm5E8ter5R1BxaRLygoenGC3Dbd0d"; // Replace 'YOUR_NETLIFY_ACCESS_TOKEN' with your actual token
+        const response = await fetch("https://api.netlify.com/api/v1/sites", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch projects");
+        }
+        const projects = await response.json();
+        setProjectCount(projects.length);
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+  const [repositoryCount, setRepositoryCount] = useState(null);
+  const fetchRepositories = async () => {
+    try {
+      const token =
+        "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"; // Replace 'YOUR_PERSONAL_ACCESS_TOKEN' with your actual token
+      const response = await fetch("https://api.github.com/user/repos", {
+        headers: {
+          Authorization: `token ${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch repositories");
+      }
+      const repositories = await response.json();
+      setRepositoryCount(repositories.length);
+    } catch (error) {
+      console.error("Error fetching repositories:", error);
+    }
   };
+
+  useEffect(() => {
+    fetchRepositories();
+  }, []);
+  const form = useRef();
+  const [showAlert, setShowAlert] = useState(false);
+  const [senderName, setSenderName] = useState("");
+  const resetForm = () => {
+    form.current.reset();
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const btn = e.target.querySelector("button");
+    btn.textContent = "Sending...";
+    const formData = {
+      name: name,
+      email: email,
+      message: message,
+    };
+
+    emailjs
+      .sendForm("service_uu3nyde", "template_jsxdavw", form.current, {
+        publicKey: "kugwCCsQnP9-UAMTy",
+        ...formData,
+      })
+      .then(
+        () => {
+          console.log("SUCCESS!");
+          console.log("Name:", name);
+          console.log("Email:", email);
+          console.log("Message:", message);
+          btn.textContent = "Send Email";
+          setSenderName(e.target.name.value);
+          setShowAlert(true);
+          resetForm();
+          setTimeout(() => {
+            setShowAlert(false);
+          }, 7000);
+          setName("");
+          setEmail("");
+          setMessage("");
+          setSubmitted(true);
+        },
+        (error) => {
+          console.log("FAILED...", error.text);
+        }
+      );
+  };
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const mobile = {
+    transition: {
+      duration: 0.9,
+    },
+  };
+  const [submitted, setSubmitted] = useState(false);
 
   const [data, setData] = useState([]);
 
@@ -58,22 +147,6 @@ function App() {
     }
   };
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
-  const mobile = {
-    transition: {
-      duration: 0.9,
-    },
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setName("");
-    setEmail("");
-    setMessage("");
-    setSubmitted(true);
-  };
   const [toggleMenu, setToggleMenu] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const toggleDarkMode = () => {
@@ -81,11 +154,6 @@ function App() {
   };
 
   const [activeNavItem, setActiveNavItem] = useState(null);
-  const [submitted, setSubmitted] = useState(false);
-
-  const handleClick = () => {
-    setSubmitted(true);
-  };
 
   const { ref, inView } = useInView({
     triggerOnce: true,
@@ -147,21 +215,29 @@ function App() {
                 }`}
               >
                 <div>
-                  <ul className="font-[inter] font-medium flex  flex-col gap-10 lg:flex-row">
+                  <ul className="font-inter font-medium flex flex-col gap-10 lg:flex-row">
                     {navs.map((nav) => (
                       <motion.li
-                        to={nav.href}
+                      whileHover={{color:'#EB03FF'}}
                         key={nav.id}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         className={
                           activeNavItem === nav.href
-                            ? " active border-b-4 pb-3 border-b-[#F237F6C2]  rounded-sm"
+                            ? "active border-b-4  border-b-[#F237F6C2] rounded-sm"
                             : ""
                         }
-                        onClick={() => setActiveNavItem(nav.id)}
+                        onClick={() => {
+                          setActiveNavItem(nav.href);
+                        }} 
                       >
-                        <a href={nav.href}>{nav.content}</a>
+                        <a 
+                        className={
+                          activeNavItem === nav.href
+                            ? "active pb-3 h-full  "
+                            : ""
+                        }
+                         onClick={() => setActiveNavItem(nav.href)} href={nav.href}>{nav.content}</a>
                       </motion.li>
                     ))}
                   </ul>
@@ -577,7 +653,11 @@ function App() {
             <div class="outer w-[160px] h-[160px] flex rounded-[50%] justify-center items-center p-0">
               <div class="inner grid rounded-[50%] w-[80%] h-[80%] justify-center items-center">
                 <div className="text-[2rem] font-[italic]" id="number">
-                  65%
+                  {projectCount === null ? (
+                    <p>Loading...</p>
+                  ) : (
+                    <p> {projectCount}</p>
+                  )}
                 </div>
                 <div>deployed</div>
               </div>
@@ -605,7 +685,7 @@ function App() {
           <div class="h-[160px] w-[160px] relative">
             <div class="outer w-[160px] h-[160px] flex rounded-[50%] justify-center items-center p-0">
               <div class="inner grid rounded-[50%] w-[80%] h-[80%] justify-center items-center ">
-                <div className="text-[2rem] font-[italic]">80%</div>
+                <div className="text-[2rem] font-[italic]">95%</div>
                 <div>Satisfied</div>
               </div>
             </div>
@@ -634,8 +714,15 @@ function App() {
           <div class="h-[160px] w-[160px] relative">
             <div class="outer w-[160px] h-[160px] flex rounded-[50%] justify-center items-center p-0">
               <div class="inner grid rounded-[50%] w-[80%] h-[80%] justify-center items-center ">
-                <div className="text-[2rem] font-[italic]">94%</div>
-                <div>Success</div>
+                <div className="text-[2rem] font-[italic]">
+                  {" "}
+                  {repositoryCount === null ? (
+                    <p>Loading...</p>
+                  ) : (
+                    <p> {repositoryCount}</p>
+                  )}
+                </div>
+                <div>Repositries</div>
               </div>
             </div>
             <svg
@@ -859,59 +946,129 @@ function App() {
         >
           Contact Me
         </motion.p>
-        <form
-          ref={form}
-          onSubmit={handleSubmit}
-          className="flex flex-col mt-[10vh] items-center lg:gap-[4rem] gap-6"
-        >
-          <span className="flex flex-col w-10/12 lg:w-5/12 text-white">
-            <label htmlFor="name">Name:</label>
-            <input
-              type="text"
-              id="name"
-              value={name}
-              required
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Enter your name here..."
-              className=" w-[100%] placeholder:text-[#D9D9D9D9] placeholder:text-[1rem] placeholder:font[inter] p-2 rounded-[2rem] bg-[#49212161] focus:bg-[#49212161] after:bg-[#49212161] outline-none"
-            />
-          </span>
-          <span className="flex flex-col w-10/12 lg:w-5/12 text-white">
-            <label htmlFor="email">Email:</label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              required
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email here..."
-              className="w-[100%] placeholder:text-[#D9D9D9D9] placeholder:text-[1rem] placeholder:font[inter] p-2 rounded-[2rem] bg-[#49212161] outline-none"
-            />
-          </span>
-          <span className="flex flex-col w-10/12 lg:w-5/12 text-white text-start">
-            <label htmlFor="message">Message:</label>
-            <textarea
-              id="message"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="Enter your message here..."
-              className="focus:p-5 h-[15rem] placeholder:text-[#D9D9D9D9] placeholder:text-[1rem] placeholder:font[inter] p-2 rounded-[2rem] bg-[#49212161] outline-none"
-            />
-          </span>
-          <span>
-            <button
-              onSubmit={sendEmail}
-              type="submit"
-              className="opacity-50 hover:opacity-100 hover:ease-in focus:bg-opacity-100 font-bold not-italic font-[inter] lg:w-[12.4rem] rounded-[3.125rem] bg-[#EB03FF] w-[13rem] text-center p-3"
-              whileTap={{ scale: 0.75 }}
+        {showAlert && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ ease: "linear", duration: 0.8 }}
+            className="bg-[#49212161] border border-[#49212161] text-[1.2rem] text-center rounded-lg text-white px-4 py-3  w-11/12 h-[40vh] m-auto  relative mb-4"
+            role="alert"
+          >
+            <div className="flex relative justify-between  w-full sm:inline">
+              <p className="w-8/12"></p>
+              <span
+                className="right-0 relative "
+                onClick={() => setShowAlert(false)}
+              >
+                <img className=" w-9" src={menu} alt="" />
+              </span>
+            </div>
+            <p>Email sent successfully!</p>
+            <p>
+              Hey {senderName}, your email has been sent. Excel will get back to
+              you soon
+            </p>
+            <svg
+              className=" w-2/6 mx-auto my-5 "
+              viewBox="0 0 117 117"
+              version="1.1"
+              xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink"
+              fill="#000000"
             >
-              {submitted ? "Submitted" : "Submit"}
-            </button>
-          </span>
-        </form>
+              <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+              <g
+                id="SVGRepo_tracerCarrier"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              ></g>
+              <g id="SVGRepo_iconCarrier">
+                {" "}
+                <title></title> <desc></desc> <defs></defs>{" "}
+                <g
+                  fill="none"
+                  fill-rule="evenodd"
+                  id="Page-1"
+                  stroke="none"
+                  stroke-width="1"
+                >
+                  {" "}
+                  <g fill-rule="nonzero" id="correct">
+                    {" "}
+                    <path
+                      d="M34.5,55.1 C32.9,53.5 30.3,53.5 28.7,55.1 C27.1,56.7 27.1,59.3 28.7,60.9 L47.6,79.8 C48.4,80.6 49.4,81 50.5,81 C50.6,81 50.6,81 50.7,81 C51.8,80.9 52.9,80.4 53.7,79.5 L101,22.8 C102.4,21.1 102.2,18.5 100.5,17 C98.8,15.6 96.2,15.8 94.7,17.5 L50.2,70.8 L34.5,55.1 Z"
+                      fill="#17AB13"
+                      id="Shape"
+                    ></path>{" "}
+                    <path
+                      d="M89.1,9.3 C66.1,-5.1 36.6,-1.7 17.4,17.5 C-5.2,40.1 -5.2,77 17.4,99.6 C28.7,110.9 43.6,116.6 58.4,116.6 C73.2,116.6 88.1,110.9 99.4,99.6 C118.7,80.3 122,50.7 107.5,27.7 C106.3,25.8 103.8,25.2 101.9,26.4 C100,27.6 99.4,30.1 100.6,32 C113.1,51.8 110.2,77.2 93.6,93.8 C74.2,113.2 42.5,113.2 23.1,93.8 C3.7,74.4 3.7,42.7 23.1,23.3 C39.7,6.8 65,3.9 84.8,16.2 C86.7,17.4 89.2,16.8 90.4,14.9 C91.6,13 91,10.5 89.1,9.3 Z"
+                      fill="#4A4A4A"
+                      id="Shape"
+                    ></path>{" "}
+                  </g>{" "}
+                </g>{" "}
+              </g>
+            </svg>
+          </motion.div>
+        )}
+        {!showAlert && (
+          <form
+            onSubmit={handleSubmit}
+            ref={form}
+            className="flex flex-col mt-[10vh] items-center lg:gap-[2.5rem] gap-6"
+          >
+            <span className="flex flex-col w-10/12 lg:w-5/12 text-white">
+              <label htmlFor="name">Name:</label>
+              <input
+                type="text"
+                name="name"
+                id="name"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter your name here..."
+                className="w-[100%] placeholder:text-[#D9D9D9D9] placeholder:text-[1rem] placeholder:font[inter] p-2 rounded-[2rem] bg-[#49212161] focus:bg-[#49212161] after:bg-[#49212161] outline-none"
+              />
+            </span>
+            <span className="flex flex-col w-10/12 lg:w-5/12 text-white">
+              <label htmlFor="email">Email:</label>
+              <input
+                type="email"
+                name="email"
+                id="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email here..."
+                className="w-[100%] placeholder:text-[#D9D9D9D9] placeholder:text-[1rem] placeholder:font[inter] p-2 rounded-[2rem] bg-[#49212161] outline-none"
+              />
+            </span>
+            <span className="flex flex-col w-10/12 lg:w-5/12 text-white text-start">
+              <label htmlFor="message">Message:</label>
+              <textarea
+                id="message"
+                name="message"
+                required
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder="Enter your message here..."
+                className="focus:p-5 h-[15rem] placeholder:text-[#D9D9D9D9] placeholder:text-[1rem] placeholder:font[inter] p-2 rounded-[2rem] bg-[#49212161] outline-none"
+              />
+            </span>
+            <span>
+              <button
+                type="submit"
+                className="opacity-50 hover:opacity-100 hover:ease-in focus:bg-opacity-100 font-bold not-italic font-[inter] lg:w-[12.4rem] rounded-[3.125rem] bg-[#EB03FF] w-[13rem] text-center p-3"
+                whileTap={{ scale: 0.75 }}
+              >
+                {submitted ? "Send Email" : "Send Email"}
+              </button>
+            </span>
+          </form>
+        )}
 
-        <p className="flex relative h-12 bg-[#120720] items-center text-center mt-11 justify-center">
-          All Right Reserved by Rohan Patil
+        <p className=" flex relative h-12  items-center text-center mt-11 justify-center">
+          All Right Reserved by Rohan Patil || developed by {'{Excel}'}
         </p>
       </section>
     </>
