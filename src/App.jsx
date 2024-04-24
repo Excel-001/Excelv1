@@ -258,13 +258,16 @@ function App() {
                     </span>
                   </label>
                   <span>
-                    <motion.button
+                    <a href="#contact">
+                         <motion.button
                       whileTap={{ scale: 0.75 }}
                       type="button"
                       className="opacity-50 hover:opacity-100 hover:ease-in focus:bg-opacity-100 font-bold not-italic font-[inter] lg:w-[10.4rem]  w-[10rem] rounded-[3.125rem] bg-[#EB03FF] text-center p-3"
                     >
-                      Contact Me
+                      Contact Me 
                     </motion.button>
+                    </a>
+                 
                   </span>
                 </div>
               </div>
@@ -345,7 +348,7 @@ function App() {
             <div className="flex w-[100%] lg:w-6/12 justify-center items-center ">
               <img src={bigglow} className="" alt="" />
             </div>
-            <div className="lg:h-[70vh] absolute lg:relative bottom-0  flex lg:flex-col  gap-16  lg:w-fit lg:gap-6">
+            <div className="lg:h-[70vh] absolute lg:relative bottom-0 w-11/12  flex lg:flex-col  gap-16  lg:w-fit lg:gap-6">
               <a
                 href="https://github.com/Excel-001?tab=overview&from=2024-03-01&to=2024-03-31"
                 target="_blank"
@@ -470,13 +473,16 @@ function App() {
             trends,ensures that every project they undertake is not only
             visually stunning but also optimized for peak performance.
             <span className=" flex justify-between  relative items-center lg:items-end">
-              <motion.button
+              <a href="#contact">
+                <motion.button
                 whileTap={{ scale: 0.75 }}
                 type="button"
                 className=" hover:bg-opacity-100 lg:h-12 z-10 flex-grow-0 hover:opacity-100 hover:ease-in  font-bold not-italic font-[inter] bg-opacity-40 lg:w-[12.4rem] sm:w-[15rem] rounded-[3.125rem] bg-[#F237F6]  backdrop-filter backdrop-blur-3xl w-6/12 text-center p-3"
               >
                 Contact Me
               </motion.button>
+              </a>
+              
               <picture className=" absolute right-0 lg:relative">
                 {" "}
                 <img src={dotp} alt="" />
