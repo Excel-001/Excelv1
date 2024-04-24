@@ -50,7 +50,7 @@ function App() {
   const fetchRepositories = async () => {
     try {
       const token =
-        "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"; // Replace 'YOUR_PERSONAL_ACCESS_TOKEN' with your actual token
+        "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"; 
       const response = await fetch("https://api.github.com/user/repos", {
         headers: {
           Authorization: `token ${token}`,
@@ -452,7 +452,7 @@ function App() {
         <div className=" flex lg:gap-4 lg:flex-row flex-col  lg:justify-between  w-11/12">
           <picture className="lg:w-5/12 flex sm:w-9/12 w-11/12 md:w-7/12 ">
             <img className="w-[100%]" src={profile} alt="" />
-          </picture>
+          </picture>  
           <motion.p
             initial={{
               opacity: 0,
