@@ -15,9 +15,11 @@ import project from "./assets/project.svg";
 import contact from "./assets/contact.svg";
 import GraphemeSplitter from "grapheme-splitter";
 import menu from "./assets/menu.svg";
+import './setup.js'
+
 import x from "./assets/x.svg";
 import React, { useState, useRef, useEffect } from "react";
-import { motion, useAnimation, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { TypeAnimation } from "react-type-animation";
 import emailjs from "@emailjs/browser";
@@ -49,22 +51,31 @@ function App() {
   const [repositoryCount, setRepositoryCount] = useState(null);
   const fetchRepositories = async () => {
     try {
-      const token =
-        "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"; 
+      const token = import.meta.env.VITE_REACT_APP_GITHUB_TOKEN;
+ 
+      if (!token) {
+        throw new Error("GitHub token not found");
+      }
+    
       const response = await fetch("https://api.github.com/user/repos", {
         headers: {
           Authorization: `token ${token}`,
         },
       });
+    
       if (!response.ok) {
         throw new Error("Failed to fetch repositories");
       }
+    
       const repositories = await response.json();
       setRepositoryCount(repositories.length);
     } catch (error) {
       console.error("Error fetching repositories:", error);
     }
   };
+  
+  
+  
 
   useEffect(() => {
     fetchRepositories();
@@ -183,6 +194,8 @@ function App() {
   const splitter = new GraphemeSplitter();
   return (
     <>
+    
+    
       <section
         id="home"
         className={` h-[99vh]  flex flex-col justify-between items-center ${
@@ -473,17 +486,17 @@ function App() {
             trends,ensures that every project they undertake is not only
             visually stunning but also optimized for peak performance.
             <span className=" flex justify-between  relative items-center lg:items-end">
-              <a href="#contact">
+              <a href="#contact" className=" m-auto md:m-0">
                 <motion.button
                 whileTap={{ scale: 0.75 }}
                 type="button"
-                className=" hover:bg-opacity-100 lg:h-12 z-10 flex-grow-0 hover:opacity-100 hover:ease-in  font-bold not-italic font-[inter] bg-opacity-40 lg:w-[12.4rem] sm:w-[15rem] rounded-[3.125rem] bg-[#F237F6]  backdrop-filter backdrop-blur-3xl w-6/12 text-center p-3"
+                className=" m-auto hover:bg-opacity-100 lg:h-12 z-40 flex-grow-0 hover:opacity-100 hover:ease-in  font-bold not-italic font-[inter] bg-opacity-40 lg:w-[12.4rem] sm:w-[15rem] rounded-[3.125rem] bg-[#F237F6]  backdrop-filter backdrop-blur-3xl w-[12rem] text-center p-3"
               >
                 Contact Me
               </motion.button>
               </a>
               
-              <picture className=" absolute right-0 lg:relative">
+              <picture className=" hidden md:block absolute right-0 lg:relative">
                 {" "}
                 <img src={dotp} alt="" />
               </picture>
