@@ -20,6 +20,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { TypeAnimation } from "react-type-animation";
+import ShowMoreContainer from "./showmore";
 import emailjs from "@emailjs/browser";
 
 function App() {
@@ -909,8 +910,9 @@ function App() {
             My Projects
           </motion.p>
         </div>
-        <div className=" gap-10 w-11/12 flex flex-wrap justify-around ">
-          {data.map((site) => (
+   
+          <ShowMoreContainer className=" ">
+              {data.map((site) => (
             <motion.div
               key={site.id}
               variants={fadeInAnimationVariants}
@@ -921,7 +923,7 @@ function App() {
               href={site.url}
               whileHover={{ scale: 1.1, translateX: -2, translateY: -2 }}
               style={{ "--image-url": `url(${site.screenshot_url})` }}
-              className=" w-11/12  lg:w-3/12 sm:w-5/12  flex-wrap backdrop-blur-[123px] bg-[image:var(--image-url)] bg-contain  bg-no-repeat h-[15rem]  shadow-lg rounded-[16px] cursor-pointer   hover:translate-x-2 hover:-translate-y-2  transition-all ease-in-out duration-300 relative group bg-opacity-15 "
+              className=" w-9/12 m-auto relative    lg:w-3/12 sm:w-5/12  flex-wrap backdrop-blur-[123px] bg-[image:var(--image-url)] bg-contain  bg-no-repeat h-[15rem]  shadow-lg rounded-[16px] cursor-pointer   hover:translate-x-2 hover:-translate-y-2  transition-all ease-in-out duration-300  group bg-opacity-15 "
             >
               <a href={site.url} target="_blank">
                 <div className="absolute font-[inter] bottom-0  font-medium w-[100%] h-[100%] backdrop-blur-[3rem]   -rotate-0   transition-all ease-in-out duration-500 hidden  group-hover:block bg-[#000] backdrop-opacity-15 bg-opacity-70  px-5 py-5 lg:hidden  rounded-lg text-sm shadow-lg text-white text-bold">
@@ -930,16 +932,18 @@ function App() {
                   <p>Author: {site.account_name}</p>
                 </div>
 
-                <div className="flex flex-col gap-2  w-2/4 lg:-right-[3rem] right-0 z-10 lg:bottom-[10%] bottom-0 font-[inter] absolute bg-blue-900 font-medium   lg:gap-4   -rotate-0  lg:hidden transition-all ease-in-out duration-500  lg:group-hover:block   p-1  rounded-lg text-sm shadow-lg text-white text-bold">
+                <div className="flex flex-col gap-2 absolute   w-fit  md:w-4/5 lg:-right-[0] right-0 z-10  bottom-0 font-[inter]  bg-blue-900 font-medium   lg:gap-4   -rotate-0  lg:hidden transition-all ease-in-out duration-500  lg:group-hover:block   p-1  rounded-lg text-sm shadow-lg text-white text-bold">
                   <p className="font-[K2D] font-bold text-[1rem]">
                     {site.name}
                   </p>
-                  <p className=" font-[roboto] font-light"> Deployed: {new Date(site.created_at).toLocaleDateString()}</p>
+                  <p className=" font-[roboto]   font-light"> { `Deployed:`} {new Date(site.created_at).toLocaleDateString()}</p>
                 </div>
               </a>
             </motion.div>
           ))}
-        </div>
+          </ShowMoreContainer>
+        
+   
       </section>
 
       <section
