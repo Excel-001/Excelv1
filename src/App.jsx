@@ -15,8 +15,6 @@ import project from "./assets/project.svg";
 import contact from "./assets/contact.svg";
 import GraphemeSplitter from "grapheme-splitter";
 import menu from "./assets/menu.svg";
-import './setup.js'
-
 import x from "./assets/x.svg";
 import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
@@ -26,7 +24,7 @@ import emailjs from "@emailjs/browser";
 
 function App() {
   const [projectCount, setProjectCount] = useState(null);
-
+  const [deployDate, setDeployDate] = useState(null);
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -36,6 +34,7 @@ function App() {
             Authorization: `Bearer ${token}`,
           },
         });
+        
         if (!response.ok) {
           throw new Error("Failed to fetch projects");
         }
@@ -533,7 +532,7 @@ function App() {
           >
             <motion.div
               animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 300 }}
-              transition={{ duration: 1, ease: "easeOut" }}
+              transition={{ duration: .5, ease: "easeOut" }}
               className=" flex  font-[inter]  lg:w-2/5 justify-between font-normal"
             >
               <p>CSS</p>
@@ -549,7 +548,7 @@ function App() {
             </motion.div>
             <motion.div
               animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 300 }}
-              transition={{ duration: 1, ease: "easeOut", delay: 0.4 }}
+              transition={{ duration: .5, ease: "easeIn" }}
               className=" flex font-[inter] lg:w-2/5 justify-between font-normal"
             >
               <p className="">Bootstrap </p>
@@ -565,7 +564,7 @@ function App() {
             </motion.div>
             <motion.div
               animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 300 }}
-              transition={{ duration: 1, ease: "easeOut", delay: 0.8 }}
+              transition={{ duration: .5, ease: "easeIn" }}
               className=" flex font-[inter] lg:w-2/5 justify-between font-normal"
             >
               <p>Javascript </p>
@@ -581,7 +580,7 @@ function App() {
             </motion.div>
             <motion.div
               animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 300 }}
-              transition={{ duration: 1, ease: "easeOut", delay: 1 }}
+              transition={{ duration: .5, ease: "easeIn" }}
               className=" flex lg:w-2/5 justify-between font-[inter] font-normal"
             >
               <p className="">React</p>
@@ -597,7 +596,7 @@ function App() {
             </motion.div>
             <motion.div
               animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 300 }}
-              transition={{ duration: 1, ease: "easeOut", delay: 1.2 }}
+              transition={{ duration: .5, ease: "easeIn" }}
               className=" flex lg:w-2/5 justify-between font-[inter] font-normal"
             >
               <p>Tailwind</p>
@@ -613,7 +612,7 @@ function App() {
             </motion.div>
             <motion.div
               animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 400 }}
-              transition={{ duration: 1, ease: "easeOut", delay: 1.4 }}
+              transition={{ duration: .5, ease: "easeIn" }}
               className=" flex font-[inter] lg:w-2/5 justify-between font-normal"
             >
               <p className="">Node.js</p>
@@ -629,7 +628,7 @@ function App() {
             </motion.div>
             <motion.div
               animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 300 }}
-              transition={{ duration: 1, ease: "easeOut", delay: 1.6 }}
+              transition={{ duration: .5, ease: "easeIn" }}
               className="flex font-[inter] lg:w-2/5 justify-between font-normal"
             >
               <p className="">HTML</p>
@@ -645,7 +644,7 @@ function App() {
             </motion.div>
             <motion.div
               animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 500 }}
-              transition={{ duration: 1, delay: 2 }}
+              transition={{ duration: .5, ease: "easeIn" }}
               className=" flex font-[inter] lg:w-2/5 justify-between font-normal"
             >
               <p className="">Figma</p>
@@ -662,7 +661,7 @@ function App() {
           </div>
         </div>
       </section>
-      <div
+      <section
         className={`text-white py-11 gap-5 flex flex-col items-center ${
           darkMode ? "bg-[#595959]" : "bg-[#120720] "
         }`}
@@ -736,7 +735,7 @@ function App() {
                 <div className="text-[2rem] font-[italic]">
                   {" "}
                   {repositoryCount === null ? (
-                    <p>Loading...</p>
+                    <p>10+</p>
                   ) : (
                     <p> {repositoryCount}</p>
                   )}
@@ -877,13 +876,13 @@ function App() {
                 October 7, 2023
               </time>
               <p class="text-base font-normal text-gray-500 dark:text-gray-400">
-                I got into NIle for one year programme which i had the intertion
-                of studying Cbyer security.
+                I got into NIle for one year programme which i had the intention
+                of studying Cyber security.
               </p>
             </div>
           </li>
         </ol>
-      </div>
+      </section>
 
       <section
         id="projects"
@@ -922,20 +921,20 @@ function App() {
               href={site.url}
               whileHover={{ scale: 1.1, translateX: -2, translateY: -2 }}
               style={{ "--image-url": `url(${site.screenshot_url})` }}
-              className=" w-3/4 lg:w-3/12 sm:w-5/12  flex-wrap backdrop-blur-[123px] bg-[image:var(--image-url)] bg-contain  bg-no-repeat h-[15rem]  shadow-lg rounded-[16px] cursor-pointer   hover:translate-x-2 hover:-translate-y-2  transition-all ease-in-out duration-300 relative group bg-opacity-15 "
+              className=" w-11/12  lg:w-3/12 sm:w-5/12  flex-wrap backdrop-blur-[123px] bg-[image:var(--image-url)] bg-contain  bg-no-repeat h-[15rem]  shadow-lg rounded-[16px] cursor-pointer   hover:translate-x-2 hover:-translate-y-2  transition-all ease-in-out duration-300 relative group bg-opacity-15 "
             >
               <a href={site.url} target="_blank">
                 <div className="absolute font-[inter] bottom-0  font-medium w-[100%] h-[100%] backdrop-blur-[3rem]   -rotate-0   transition-all ease-in-out duration-500 hidden  group-hover:block bg-[#000] backdrop-opacity-15 bg-opacity-70  px-5 py-5 lg:hidden  rounded-lg text-sm shadow-lg text-white text-bold">
                   <p>Region:{site.functions_region}</p>
-                  <p>Last update:{site.updated_at}</p>
+                  <p>Last update:{new Date(site.updated_at).toLocaleDateString()}</p>
                   <p>Author: {site.account_name}</p>
                 </div>
 
-                <div className="flex flex-col gap-2 lg:-right-[3rem] right-0 z-10 lg:bottom-[10%] bottom-0 font-[inter] absolute bg-blue-900 font-medium  w-fit lg:gap-4   -rotate-0  lg:hidden transition-all ease-in-out duration-500  lg:group-hover:block   p-1  rounded-lg text-sm shadow-lg text-white text-bold">
+                <div className="flex flex-col gap-2  w-2/4 lg:-right-[3rem] right-0 z-10 lg:bottom-[10%] bottom-0 font-[inter] absolute bg-blue-900 font-medium   lg:gap-4   -rotate-0  lg:hidden transition-all ease-in-out duration-500  lg:group-hover:block   p-1  rounded-lg text-sm shadow-lg text-white text-bold">
                   <p className="font-[K2D] font-bold text-[1rem]">
                     {site.name}
                   </p>
-                  <p className=" font-[roboto] font-light">{site.created_at}</p>
+                  <p className=" font-[roboto] font-light"> Deployed: {new Date(site.created_at).toLocaleDateString()}</p>
                 </div>
               </a>
             </motion.div>

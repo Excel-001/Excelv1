@@ -1,6 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+section{
+overflow-x: hidden;
+
+}
 .shadow-inset {
 color: whitesmoke;
     border-radius: 3.125rem;
