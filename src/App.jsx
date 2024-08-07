@@ -20,6 +20,7 @@ import emailjs from "@emailjs/browser";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import ShowMoreContainer from "./showmore";
+import Globe from "./globe";
 function App() {
   const [projectCount, setProjectCount] = useState(null);
   
@@ -32,32 +33,32 @@ function App() {
   const JavaScript = 75;
   const node = 65;
   const circumference = 500;
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const token = "nfp_hYqDLSxYm5E8ter5R1BxaRLygoenGC3Dbd0d";
-        const response = await fetch("https://api.netlify.com/api/v1/sites", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+  // useEffect(() => {
+  //   const fetchProjects = async () => {
+  //     try {
+  //       const token = "nfp_hYqDLSxYm5E8ter5R1BxaRLygoenGC3Dbd0d";
+  //       const response = await fetch("https://api.netlify.com/api/v1/sites", {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       });
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch projects");
-        }
-        const projects = await response.json();
-        setProjectCount(projects.length);
-      } catch (error) {
-        console.error("Error fetching projects:", error);
-      }
-    };
+  //       if (!response.ok) {
+  //         throw new Error("Failed to fetch projects");
+  //       }
+  //       const projects = await response.json();
+  //       setProjectCount(projects.length);
+  //     } catch (error) {
+  //       console.error("Error fetching projects:", error);
+  //     }
+  //   };
 
-    fetchProjects();
-  }, []);
+  //   fetchProjects();
+  // }, []);
   const [repositoryCount, setRepositoryCount] = useState(null);
   const fetchRepositories = async () => {
     try {
-      const token = import.meta.env.VITE_REACT_APP_GITHUB_TOKEN;
+      const token = process.env.REACT_APP_GITHUB_TOKEN;
 
       if (!token) {
         throw new Error("GitHub token not found");
@@ -123,7 +124,7 @@ function App() {
           setSubmitted(true);
         },
         (error) => {
-          console.log("FAILED...", error.text);
+ 
         }
       );
   };
@@ -148,7 +149,7 @@ function App() {
     try {
       const response = await fetch("https://api.netlify.com/api/v1/sites", {
         headers: {
-          Authorization: "Bearer nfp_hYqDLSxYm5E8ter5R1BxaRLygoenGC3Dbd0d",
+          Authorization: "Bearer nfp_hd7ciGcV2ztMAT5jJsG4fLy6x1MPRL9M9fea",
         },
       });
 
@@ -220,7 +221,7 @@ function App() {
   const splitter = new GraphemeSplitter();
   const text = "Meet Excel , a talented web developer with a passion for crafting elegant and functional digital solutions. Armed with expertise in HTML,CSS, JavaScript, React and more, Their keen eye for detail,coupled with their commitment to staying abreast of industry trends,ensures that every project they undertake is not only visually stunning but also optimized for peak performance.".split(" ");
   return (
-    <>
+    <div className=" scroll-smooth">
       <section
         id="home"
         className={` lg:h-[99vh] h-fit flex flex-col justify-between items-center ${
@@ -383,7 +384,7 @@ function App() {
             </div>
 
             <div className="flex w-[100%] lg:w-6/12 justify-center items-center ">
-              <img src={bigglow} className="" alt="" />
+            <Globe darkMode={darkMode} />
             </div>
             <div className="lg:h-[70vh]  absolute lg:relative bottom-0 w-11/12  flex lg:flex-col h-fit    lg:gap-16  lg:w-fit lg:gap-6">
               {socials.map((social, index) => (
@@ -1383,7 +1384,7 @@ function App() {
           </p>
         </section>
       </div>
-    </>
+    </div>
   );
 }
 
