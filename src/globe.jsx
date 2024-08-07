@@ -1,15 +1,26 @@
 import React, { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
-import "./App.css";
-// Sample coordinates with location names
-const coordinates = [
-  { id: 1, lat: 51.1657, lon: 10.4515, name: 'Germany' },
-  { id: 2, lat: 35.8617, lon: 104.1954, name: 'China' },
-  { id: 3, lat: -25.2744, lon: 133.7751, name: 'Australia' },
-  { id: 4, lat: 37.0902, lon: -95.7129, name: 'USA' },
-  { id: 5, lat: 0.5937, lon: 78.9629, name: 'India' },
+import figma from './assets/figma.svg';
+import './App.css';
+import react1 from './assets/react.svg';
+import figma1 from './assets/figma1.svg';
+import tailwind from './assets/tailwind.svg';
+import node from './assets/node.svg';
+import html from './assets/html.svg';
+import css from './assets/css.svg';
+import javascript from './assets/javascript.svg';
+import bootstrap from './assets/bootstrap.svg';
 
-  // Add more coordinates as needed
+const coordinates = [
+  { id: 1, lat: 51.1657, lon: 10.4515, name: 'Germany', img: html, link: 'https://example.com/germany' },
+  { id: 2, lat: 35.8617, lon: 104.1954, name: 'China', img: react1, link: 'https://example.com/china' },
+  { id: 3, lat: -25.2744, lon: 133.7751, name: 'Australia', img: figma1, link: 'https://example.com/australia' },
+  { id: 4, lat: 37.0902, lon: -95.7129, name: 'USA', img: tailwind, link: 'https://example.com/usa' },
+  { id: 5, lat: -0.5937, lon: 20.9629, name: 'India', img: node, link: 'https://example.com/india' },
+  { id: 6, lat: 0.5937, lon: -78.9629, name: '', img: css, link: 'https://example.com/india' },
+  { id: 7, lat: -0.5937, lon: -128.9629, name: '', img: bootstrap, link: 'https://example.com/india' },
+  { id: 8, lat: -34.4937, lon: 78.9629, name: '', img: javascript, link: 'https://example.com/india' },
+ 
 ];
 
 function Globe({ darkMode }) {
@@ -26,6 +37,14 @@ function Globe({ darkMode }) {
     renderer.setSize(mount.clientWidth, mount.clientHeight);
     renderer.setClearColor(0x000000, 0);
     mount.appendChild(renderer.domElement);
+
+    // Handle window resize
+    const handleResize = () => {
+      camera.aspect = mount.clientWidth / mount.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(mount.clientWidth, mount.clientHeight);
+    };
+    window.addEventListener('resize', handleResize);
 
     // Define gradient shader material
     const vertexShader = `
@@ -76,27 +95,68 @@ function Globe({ darkMode }) {
     };
 
     // Add location tags as children of the globe
+    const sprites = [];
     coordinates.forEach(coord => {
-      const { id, lat, lon, name } = coord;
-      const position = convertLatLonToVector3(lat, lon, 1.02); // Slightly outside the globe surface
+      const { id, lat, lon, name, img, link } = coord;
+      const position = convertLatLonToVector3(lat, lon, 1.04); // Slightly outside the globe surface
+      const textureLoader = new THREE.TextureLoader();
       const spriteMaterial = new THREE.SpriteMaterial({
-        map: new THREE.TextureLoader().load('https://images.ctfassets.net/zlhl2y58oyef/uR8Nuf7Ly0L162INa7p44/0a310fd400d19c55b1c5287f4d722547/SpareParts_7030.jpg'),
+        map: textureLoader.load(img),
         transparent: true,
       });
       const sprite = new THREE.Sprite(spriteMaterial);
       sprite.position.copy(position);
       sprite.scale.set(0.1, 0.1, 0.1); // Adjust the size of the location tags
-      sprite.userData = { name }; // Store the name in the sprite's userData
+      sprite.userData = { name, link }; // Store the name and link in the sprite's userData
       globe.add(sprite); // Add sprite as a child of the globe
-
-      // Hover detection
-      sprite.onPointerOver = () => {
-        setHoveredLocation(name);
-      };
-      sprite.onPointerOut = () => {
-        setHoveredLocation(null);
-      };
+      sprites.push(sprite); // Store sprite for raycasting
     });
+
+    // Raycaster for detecting mouse interactions
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+
+    const handleMouseMove = (event) => {
+      // Calculate mouse position in normalized device coordinates
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+
+      // Update the raycaster with the camera and mouse position
+      raycaster.updateMatrixWorld();
+      raycaster.setFromCamera(mouse, camera);
+
+      // Find intersected objects
+      const intersects = raycaster.intersectObjects(sprites);
+
+      if (intersects.length > 0) {
+        const intersected = intersects[0].object;
+        setHoveredLocation(intersected.userData.name);
+      } else {
+        setHoveredLocation(null);
+      }
+    };
+
+    const handleMouseClick = (event) => {
+      // Calculate mouse position in normalized device coordinates
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+
+      // Update the raycaster with the camera and mouse position
+      raycaster.updateMatrixWorld();
+      raycaster.setFromCamera(mouse, camera);
+
+      // Find intersected objects
+      const intersects = raycaster.intersectObjects(sprites);
+
+      if (intersects.length > 0) {
+        const intersected = intersects[0].object;
+        window.open(intersected.userData.link, '_blank');
+      }
+    };
+
+    // Add event listeners
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('click', handleMouseClick);
 
     camera.position.z = 3;
 
@@ -112,12 +172,19 @@ function Globe({ darkMode }) {
     // Cleanup on unmount
     return () => {
       mount.removeChild(renderer.domElement);
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('click', handleMouseClick);
     };
   }, [darkMode]); // Re-render when darkMode changes
 
   return (
-    <div ref={mountRef} style={{ width: '90vw', height: '100vh', position: 'relative' }}>
-      {hoveredLocation && <div className="tooltip">{hoveredLocation}</div>}
+    <div ref={mountRef} className="relative w-[100vw] h-52  lg:h-[100vh]">
+      {hoveredLocation && (
+        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white p-2 rounded-md shadow-lg">
+          {hoveredLocation}
+        </div>
+      )}
     </div>
   );
 }
